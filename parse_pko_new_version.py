@@ -74,8 +74,8 @@ def parse_contract_data_from_pdf(filepath: str, company_name: str):
         if find_company_in_contract(chunk, company_name):
             # Если компания найдена, создаем словарь с данными контракта
             contract = {
-                'Номер договора': extract_field(r"Номер договора:\s*(\S+)", chunk),
                 'Номер договора': extract_field(r"Номер договора:\s*(.*?)\s*Дата начала срока действия договора:", chunk),
+                'Дата начала': extract_field(r'Дата начала[^0-9]*(\d{2}\.\d{2}\.\d{4})', chunk),
                 'Дата окончания': extract_field(r'Дата окончания[^0-9]*(\d{2}\.\d{2}\.\d{4})', chunk),
                 'Общая сумма кредита': safe_numeric_string(extract_field(r"Общая сумма кредита / валюта:\s*([^\n]+)", chunk)),
                 'Сумма просроченных взносов': safe_numeric_string(extract_field(r"Сумма просроченных взносов:\s*([^\n]+)", chunk)),

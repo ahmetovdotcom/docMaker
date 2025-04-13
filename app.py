@@ -204,78 +204,78 @@ async def handle_attached_documents(message: Message, state: FSMContext):
 
     status_msg = await message.answer("🔍 Обрабатываю...")
 
-    try:
+    # try:
 
-        response = ask_ai_from_pdf2(file_path, user_text)
-        user_data = json.loads(response)
+    response = ask_ai_from_pdf2(file_path, user_text)
+    user_data = json.loads(response)
 
-        for mfo_name in mfo_names:
-            company = find_company_by_trade_name(mfo_name)
-            if not company:
-                await message.answer(f"⚠️ Не найдено в Базе данных: {mfo_name}")
-                continue
+    for mfo_name in mfo_names:
+        company = find_company_by_trade_name(mfo_name)
+        if not company:
+            await message.answer(f"⚠️ Не найдено в Базе данных: {mfo_name}")
+            continue
 
-            result = parse_contract_data_from_pdf(file_path, company_name=company["search_field"])
-            if not result:
-                await message.answer(f"❌ Контракт не найден в пко для: {mfo_name}")
-                continue
+        result = parse_contract_data_from_pdf(file_path, company_name=company["search_field"])
+        if not result:
+            await message.answer(f"❌ Контракт не найден в пко для: {mfo_name}")
+            continue
 
-            credit_total = re.sub(r'\s*KZT$', '', result["Общая сумма кредита"])
-            credit_total_no_cents = re.sub(r'\.\d+$', '', credit_total)
-            credit_total_int = int(credit_total_no_cents.replace(" ", ""))
-            credit_total_words = num2words(credit_total_int, lang='ru')
-            result["Общая сумма кредита"] = f"{credit_total_no_cents} ({credit_total_words})"
+        credit_total = re.sub(r'\s*KZT$', '', result["Общая сумма кредита"])
+        credit_total_no_cents = re.sub(r'\.\d+$', '', credit_total)
+        credit_total_int = int(credit_total_no_cents.replace(" ", ""))
+        credit_total_words = num2words(credit_total_int, lang='ru')
+        result["Общая сумма кредита"] = f"{credit_total_no_cents} ({credit_total_words})"
 
-            credit_str = re.sub(r'\s*KZT$', '', result["Непогашенная сумма по кредиту"])
-            overdue_str = re.sub(r'\s*KZT$', '', result["Сумма просроченных взносов"])
-            credit_val = float(credit_str.replace(" ", ""))
-            overdue_val = float(overdue_str.replace(" ", ""))
-            chosen_str = credit_str if credit_val >= overdue_val else overdue_str
-            chosen_str_no_cents = re.sub(r'\.\d+$', '', chosen_str)
-            chosen_int = int(chosen_str_no_cents.replace(" ", ""))
-            chosen_words = num2words(chosen_int, lang='ru')
+        credit_str = re.sub(r'\s*KZT$', '', result["Непогашенная сумма по кредиту"])
+        overdue_str = re.sub(r'\s*KZT$', '', result["Сумма просроченных взносов"])
+        credit_val = float(credit_str.replace(" ", ""))
+        overdue_val = float(overdue_str.replace(" ", ""))
+        chosen_str = credit_str if credit_val >= overdue_val else overdue_str
+        chosen_str_no_cents = re.sub(r'\.\d+$', '', chosen_str)
+        chosen_int = int(chosen_str_no_cents.replace(" ", ""))
+        chosen_words = num2words(chosen_int, lang='ru')
 
-            result["Непогашенная сумма по кредиту"] = f"{chosen_str_no_cents} ({chosen_words})"
-            result["Сумма просроченных взносов"] = re.sub(r'\.\d+$', '', overdue_str)
+        result["Непогашенная сумма по кредиту"] = f"{chosen_str_no_cents} ({chosen_words})"
+        result["Сумма просроченных взносов"] = re.sub(r'\.\d+$', '', overdue_str)
 
-            date_diff = calculate_date_diff(result["Дата начала"], result["Дата окончания"])
+        date_diff = calculate_date_diff(result["Дата начала"], result["Дата окончания"])
 
-            replacements = {
-                "fullName": user_data["fullName"],
-                "IIN": result["ИИН"],
-                "address": user_data["address"],
-                "phone": user_data["phone"],
-                "email": user_data["email"],
-                "receiver": company["details"]["to"],
-                "mfoAddress": company["details"]["address"],
-                "bin": company["details"]["bin"],
-                "mfoEmail": company["details"]["email"],
-                "contract_number": result["Номер договора"],
-                "contract_start_date": result["Дата начала"],
-                "contract_amount": result["Общая сумма кредита"],
-                "outstanding_amount": result["Непогашенная сумма по кредиту"],
-                "shortName": user_data["shortName"],
-                "date_diff": date_diff,
-                "reason": reason,
-                "attached_documents": attached_documents,
-                "date_now": get_current_date_str(),
-                "term": get_term_by_amount(result["Непогашенная сумма по кредиту"])
-            }
+        replacements = {
+            "fullName": user_data["fullName"],
+            "IIN": result["ИИН"],
+            "address": user_data["address"],
+            "phone": user_data["phone"],
+            "email": user_data["email"],
+            "receiver": company["details"]["to"],
+            "mfoAddress": company["details"]["address"],
+            "bin": company["details"]["bin"],
+            "mfoEmail": company["details"]["email"],
+            "contract_number": result["Номер договора"],
+            "contract_start_date": result["Дата начала"],
+            "contract_amount": result["Общая сумма кредита"],
+            "outstanding_amount": result["Непогашенная сумма по кредиту"],
+            "shortName": user_data["shortName"],
+            "date_diff": date_diff,
+            "reason": reason,
+            "attached_documents": attached_documents,
+            "date_now": get_current_date_str(),
+            "term": get_term_by_amount(result["Непогашенная сумма по кредиту"])
+        }
 
-            doc_name = result.get("ИИН", "") + "_" + mfo_name + ".docx"
-            doc_path = f"temp/{doc_name}"
-            filename = mfo_name + " " + "заявление на реестр" + " " + user_data["shortName"] + ".docx"
+        doc_name = result.get("ИИН", "") + "_" + mfo_name + ".docx"
+        doc_path = f"temp/{doc_name}"
+        filename = mfo_name + " " + "заявление на реестр" + " " + user_data["shortName"] + ".docx"
 
-            fill_doc("template.docx", doc_path, replacements)
+        fill_doc("template.docx", doc_path, replacements)
 
-            result_file = FSInputFile(doc_path, filename=filename)
-            await message.answer_document(result_file, caption=f"✅ Документ для: {mfo_name}")
-        await message.answer("✅ Готово!")
-        
+        result_file = FSInputFile(doc_path, filename=filename)
+        await message.answer_document(result_file, caption=f"✅ Документ для: {mfo_name}")
+    await message.answer("✅ Готово!")
+    
 
-        await status_msg.delete()
-    except Exception as e:
-        await status_msg.edit_text(f"⚠️ Ошибка при обработке данных: {e}")
+    await status_msg.delete()
+    # except Exception as e:
+    #     await status_msg.edit_text(f"⚠️ Ошибка при обработке данных: {e}")
 
 
 
