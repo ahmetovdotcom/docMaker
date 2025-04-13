@@ -139,12 +139,12 @@ def calculate_date_diff(start_date_str, end_date_str):
 
 
 
-@dp.message(Command("batch"))
-async def cmd_batch(message: Message, state: FSMContext):
-    await state.set_state(BatchProcess.file_path)
-    await message.answer("📄 Пожалуйста, сначала отправьте PDF-файл с описанием. (Жирный клиент)")
+# @dp.message(F.document)
+# async def cmd_batch(message: Message, state: FSMContext):
+#     await state.set_state(BatchProcess.file_path)
+#     await message.answer("📄 Пожалуйста, сначала отправьте PDF-файл с описанием. (Жирный клиент)")
 
-@dp.message(BatchProcess.file_path)
+@dp.message(F.document)
 async def handle_pdf_with_text(message: Message, state: FSMContext):
     document = message.document
 
@@ -306,147 +306,147 @@ async def cmd_start(message: Message):
     await message.answer("👋 Добро пожаловать! Пришлите PDF-файл с описанием (в подписи).")
 
 
-@dp.message(F.document)
-async def handle_pdf_with_text(message: Message, state: FSMContext):
-    document = message.document
+# @dp.message(F.document)
+# async def handle_pdf_with_text(message: Message, state: FSMContext):
+#     document = message.document
 
-    if document.mime_type != "application/pdf":
-        await message.answer("❌ Пожалуйста, отправьте PDF-файл.")
-        return
+#     if document.mime_type != "application/pdf":
+#         await message.answer("❌ Пожалуйста, отправьте PDF-файл.")
+#         return
 
-    if not message.caption or not message.caption.strip():
-        await message.answer("❗ Пожалуйста, добавьте описание к PDF-файлу.")
-        return
+#     if not message.caption or not message.caption.strip():
+#         await message.answer("❗ Пожалуйста, добавьте описание к PDF-файлу.")
+#         return
 
-    user_text = message.caption.strip()
-    file_path = f"temp/{message.from_user.id}{document.file_name}"
-    file = await bot.get_file(document.file_id)
-    try:
-        await bot.download_file(file.file_path, destination=file_path)
-        await state.update_data(user_text=user_text, file_path=file_path)
-        await state.set_state(FileInfo.MFO)
-        await message.answer("📄 Пожалуйста, введите торговое название компании.")
-    except Exception as e:
-        await message.answer(f"⚠️ Ошибка при загрузке файла: {e}")
-        return
+#     user_text = message.caption.strip()
+#     file_path = f"temp/{message.from_user.id}{document.file_name}"
+#     file = await bot.get_file(document.file_id)
+#     try:
+#         await bot.download_file(file.file_path, destination=file_path)
+#         await state.update_data(user_text=user_text, file_path=file_path)
+#         await state.set_state(FileInfo.MFO)
+#         await message.answer("📄 Пожалуйста, введите торговое название компании.")
+#     except Exception as e:
+#         await message.answer(f"⚠️ Ошибка при загрузке файла: {e}")
+#         return
     
-@dp.message(FileInfo.MFO)
-async def handle_mfo(message: Message, state: FSMContext):
-    # Ищем компанию в базе
-    company = find_company_by_trade_name(message.text)
-    if company is None:
-        await message.answer("⚠️ Компания с таким торговым названием не найдена в базе.")
-        await state.clear()
-        return
-    # Если компания найдена, продолжаем обработку
-    await state.update_data(MFO=company)
-    await state.update_data(mfo=message.text)
-    await state.set_state(FileInfo.reason)
-    data = await state.get_data()
+# @dp.message(FileInfo.MFO)
+# async def handle_mfo(message: Message, state: FSMContext):
+#     # Ищем компанию в базе
+#     company = find_company_by_trade_name(message.text)
+#     if company is None:
+#         await message.answer("⚠️ Компания с таким торговым названием не найдена в базе.")
+#         await state.clear()
+#         return
+#     # Если компания найдена, продолжаем обработку
+#     await state.update_data(MFO=company)
+#     await state.update_data(mfo=message.text)
+#     await state.set_state(FileInfo.reason)
+#     data = await state.get_data()
 
-    await message.answer("📄 Пожалуйста, напишите причину. Пример:")
-    await message.answer(f"""В настоящее время мое финансовое положение очень затруднительное в связи с нехваткой денежных средств. Также имею высокую долговую нагрузку ввиду наличия {parse_active_total(data["file_path"])} действующих договоров в микрофинансовых организациях, а также банках второго уровня, это видно по Персональному Кредитному Отчету. Являюсь получателем АСП.""")
+#     await message.answer("📄 Пожалуйста, напишите причину. Пример:")
+#     await message.answer(f"""В настоящее время мое финансовое положение очень затруднительное в связи с нехваткой денежных средств. Также имею высокую долговую нагрузку ввиду наличия {parse_active_total(data["file_path"])} действующих договоров в микрофинансовых организациях, а также банках второго уровня, это видно по Персональному Кредитному Отчету. Являюсь получателем АСП.""")
 
 
-@dp.message(FileInfo.reason)
-async def handle_reason(message: Message, state: FSMContext):
-    await state.update_data(reason=message.text)
-    await state.set_state(FileInfo.attached_documents)
-    await message.answer("📄 Пожалуйста, напишите Прилагаемые документы. Пример:")
-    await message.answer("""
-1)	ПКО - Персональный Кредитный Отчет
-2)	Удостоверение личности
-3)	Справка ЕНПФ
-4)	Выписка
-5)	Свидетельство о рождении
-6)	Справка о соц. отчислениях
-""")
+# @dp.message(FileInfo.reason)
+# async def handle_reason(message: Message, state: FSMContext):
+#     await state.update_data(reason=message.text)
+#     await state.set_state(FileInfo.attached_documents)
+#     await message.answer("📄 Пожалуйста, напишите Прилагаемые документы. Пример:")
+#     await message.answer("""
+# 1)	ПКО - Персональный Кредитный Отчет
+# 2)	Удостоверение личности
+# 3)	Справка ЕНПФ
+# 4)	Выписка
+# 5)	Свидетельство о рождении
+# 6)	Справка о соц. отчислениях
+# """)
     
 
-@dp.message(FileInfo.attached_documents)
-async def handle_attached_documents(message: Message, state: FSMContext):
-    await state.update_data(attached_documents=message.text)
-    data = await state.get_data()
-    await state.clear()
+# @dp.message(FileInfo.attached_documents)
+# async def handle_attached_documents(message: Message, state: FSMContext):
+#     await state.update_data(attached_documents=message.text)
+#     data = await state.get_data()
+#     await state.clear()
 
-    status_msg = await message.answer("📥 Загружаю PDF-файл...")
+#     status_msg = await message.answer("📥 Загружаю PDF-файл...")
 
-    file_path = data["file_path"]
-    user_text = data["user_text"]
-    mfo = data["MFO"]
+#     file_path = data["file_path"]
+#     user_text = data["user_text"]
+#     mfo = data["MFO"]
 
-    try:
-        await status_msg.edit_text("🔍 Ищу контракт в PDF-файле...")
-        result = parse_contract_data_from_pdf(file_path, company_name=mfo["search_field"])
+#     try:
+#         await status_msg.edit_text("🔍 Ищу контракт в PDF-файле...")
+#         result = parse_contract_data_from_pdf(file_path, company_name=mfo["search_field"])
 
-        if result is None:
-            await status_msg.edit_text(f"❌ Не удалось найти контракт для компании: {mfo['details']['to']}")
-            return
+#         if result is None:
+#             await status_msg.edit_text(f"❌ Не удалось найти контракт для компании: {mfo['details']['to']}")
+#             return
 
 
 
-        await status_msg.edit_text("📄 Анализирую пользовательский ввод...")
-        response = ask_ai_from_pdf2(file_path, user_text)
-        user_data = json.loads(response)
+#         await status_msg.edit_text("📄 Анализирую пользовательский ввод...")
+#         response = ask_ai_from_pdf2(file_path, user_text)
+#         user_data = json.loads(response)
 
-        await status_msg.edit_text("💰 Обрабатываю сумму кредита...")
-        credit_total = re.sub(r'\s*KZT$', '', result["Общая сумма кредита"])
-        credit_total_no_cents = re.sub(r'\.\d+$', '', credit_total)
-        credit_total_int = int(credit_total_no_cents.replace(" ", ""))
-        credit_total_words = num2words(credit_total_int, lang='ru')
-        result["Общая сумма кредита"] = f"{credit_total_no_cents} ({credit_total_words})"
+#         await status_msg.edit_text("💰 Обрабатываю сумму кредита...")
+#         credit_total = re.sub(r'\s*KZT$', '', result["Общая сумма кредита"])
+#         credit_total_no_cents = re.sub(r'\.\d+$', '', credit_total)
+#         credit_total_int = int(credit_total_no_cents.replace(" ", ""))
+#         credit_total_words = num2words(credit_total_int, lang='ru')
+#         result["Общая сумма кредита"] = f"{credit_total_no_cents} ({credit_total_words})"
 
-        credit_str = re.sub(r'\s*KZT$', '', result["Непогашенная сумма по кредиту"])
-        overdue_str = re.sub(r'\s*KZT$', '', result["Сумма просроченных взносов"])
+#         credit_str = re.sub(r'\s*KZT$', '', result["Непогашенная сумма по кредиту"])
+#         overdue_str = re.sub(r'\s*KZT$', '', result["Сумма просроченных взносов"])
 
-        credit_val = float(credit_str.replace(" ", ""))
-        overdue_val = float(overdue_str.replace(" ", ""))
-        chosen_str = credit_str if credit_val >= overdue_val else overdue_str
-        chosen_str_no_cents = re.sub(r'\.\d+$', '', chosen_str)
-        chosen_int = int(chosen_str_no_cents.replace(" ", ""))
-        chosen_words = num2words(chosen_int, lang='ru')
+#         credit_val = float(credit_str.replace(" ", ""))
+#         overdue_val = float(overdue_str.replace(" ", ""))
+#         chosen_str = credit_str if credit_val >= overdue_val else overdue_str
+#         chosen_str_no_cents = re.sub(r'\.\d+$', '', chosen_str)
+#         chosen_int = int(chosen_str_no_cents.replace(" ", ""))
+#         chosen_words = num2words(chosen_int, lang='ru')
 
-        result["Непогашенная сумма по кредиту"] = f"{chosen_str_no_cents} ({chosen_words})"
-        result["Сумма просроченных взносов"] = re.sub(r'\.\d+$', '', overdue_str)
+#         result["Непогашенная сумма по кредиту"] = f"{chosen_str_no_cents} ({chosen_words})"
+#         result["Сумма просроченных взносов"] = re.sub(r'\.\d+$', '', overdue_str)
 
-        await status_msg.edit_text("📆 Рассчитываю срок кредита...")
-        date_diff = calculate_date_diff(result["Дата начала"], result["Дата окончания"])
+#         await status_msg.edit_text("📆 Рассчитываю срок кредита...")
+#         date_diff = calculate_date_diff(result["Дата начала"], result["Дата окончания"])
 
-        replacements = {
-            "fullName": user_data["fullName"],
-            "IIN": result["ИИН"],
-            "address": user_data["address"],
-            "phone": user_data["phone"],
-            "email": user_data["email"],
-            "receiver": mfo["details"]["to"],
-            "mfoAddress": mfo["details"]["address"],
-            "bin": mfo["details"]["bin"],
-            "mfoEmail": mfo["details"]["email"],
-            "contract_number": result["Номер договора"],
-            "contract_start_date": result["Дата начала"],
-            "contract_amount": result["Общая сумма кредита"],
-            "outstanding_amount": result["Непогашенная сумма по кредиту"],
-            "shortName": user_data["shortName"],
-            "date_diff": date_diff,
-            "reason": data["reason"],
-            "attached_documents": data["attached_documents"],
-            "date_now": get_current_date_str(),
-            "term": get_term_by_amount(result["Непогашенная сумма по кредиту"])
-        }
+#         replacements = {
+#             "fullName": user_data["fullName"],
+#             "IIN": result["ИИН"],
+#             "address": user_data["address"],
+#             "phone": user_data["phone"],
+#             "email": user_data["email"],
+#             "receiver": mfo["details"]["to"],
+#             "mfoAddress": mfo["details"]["address"],
+#             "bin": mfo["details"]["bin"],
+#             "mfoEmail": mfo["details"]["email"],
+#             "contract_number": result["Номер договора"],
+#             "contract_start_date": result["Дата начала"],
+#             "contract_amount": result["Общая сумма кредита"],
+#             "outstanding_amount": result["Непогашенная сумма по кредиту"],
+#             "shortName": user_data["shortName"],
+#             "date_diff": date_diff,
+#             "reason": data["reason"],
+#             "attached_documents": data["attached_documents"],
+#             "date_now": get_current_date_str(),
+#             "term": get_term_by_amount(result["Непогашенная сумма по кредиту"])
+#         }
 
-        await status_msg.edit_text("📝 Генерирую документ...")
-        docName = result.get("ИИН", "") + ".docx"
-        doc_path = f"temp/{docName}"
-        fill_doc("template.docx", doc_path, replacements)
+#         await status_msg.edit_text("📝 Генерирую документ...")
+#         docName = result.get("ИИН", "") + ".docx"
+#         doc_path = f"temp/{docName}"
+#         fill_doc("template.docx", doc_path, replacements)
 
-        await status_msg.edit_text("📤 Отправляю итоговый документ...")
-        filename = data["MFO"]["trade_name"] + " " + "заявление на реестр" + " " + user_data["shortName"] + ".docx"
-        result_file = FSInputFile(doc_path, filename=filename)
-        await message.answer_document(result_file, caption="✅ Ваш документ готов!")
-        await status_msg.delete()
+#         await status_msg.edit_text("📤 Отправляю итоговый документ...")
+#         filename = data["MFO"]["trade_name"] + " " + "заявление на реестр" + " " + user_data["shortName"] + ".docx"
+#         result_file = FSInputFile(doc_path, filename=filename)
+#         await message.answer_document(result_file, caption="✅ Ваш документ готов!")
+#         await status_msg.delete()
 
-    except Exception as e:
-        await status_msg.edit_text(f"⚠️ Ошибка при обработке данных: {e}")
+#     except Exception as e:
+#         await status_msg.edit_text(f"⚠️ Ошибка при обработке данных: {e}")
 
 
 
