@@ -16,6 +16,7 @@ from docling_qa import ask_ai_from_pdf
 from docling_qa2 import ask_ai_from_pdf2
 from docx_replacer import fill_doc
 from parse_pko_new_version import parse_contract_data_from_pdf, parse_active_total
+from parse_pko_old_ru_version import parse_old_ru_contract_data_from_pdf, parse_old_ru_total_contracts
 from datetime import datetime
 import unicodedata
 
@@ -41,6 +42,12 @@ class BatchProcess(StatesGroup):
     reason = State()
     attached_documents = State()
     file_version = State()
+
+
+
+def remove_cents(value: str) -> str:
+            # Удаляет копейки после точки или запятой
+            return re.sub(r'[.,]\d{1,2}$', '', value)
     
 
 def clean(name: str) -> str:
@@ -189,7 +196,11 @@ async def handle_mfo_list(message: Message, state: FSMContext):
     data = await state.get_data()
 
     await message.answer("📄 Пожалуйста, напишите причину. Пример:")
-    await message.answer(f"""В настоящее время мое финансовое положение очень затруднительное в связи с нехваткой денежных средств. Также имею высокую долговую нагрузку ввиду наличия {parse_active_total(data["file_path"])} действующих договоров в микрофинансовых организациях, а также банках второго уровня, это видно по Персональному Кредитному Отчету. Являюсь получателем АСП.""")
+    if data["file_version"] == "Новая версия(рус)":
+        await message.answer(f"""В настоящее время мое финансовое положение очень затруднительное в связи с нехваткой денежных средств. Также имею высокую долговую нагрузку ввиду наличия {parse_active_total(data["file_path"])} действующих договоров в микрофинансовых организациях, а также банках второго уровня, это видно по Персональному Кредитному Отчету. Являюсь получателем АСП.""")
+    elif data["file_version"] == "Старая версия(рус)":
+        await message.answer(f"""В настоящее время мое финансовое положение очень затруднительное в связи с нехваткой денежных средств. Также имею высокую долговую нагрузку ввиду наличия {parse_old_ru_total_contracts(data["file_path"])} действующих договоров в микрофинансовых организациях, а также банках второго уровня, это видно по Персональному Кредитному Отчету. Являюсь получателем АСП.""")
+
 
 @dp.message(BatchProcess.reason)
 async def handle_reason(message: Message, state: FSMContext):
@@ -232,28 +243,36 @@ async def handle_attached_documents(message: Message, state: FSMContext):
         
 
         # тут нужно сдлеать выбор парсера в зависимости от выбранного типпа
-        result = parse_contract_data_from_pdf(file_path, company_name=company["search_field"])
+        if data["file_version"] == "Новая версия(рус)":
+            result = parse_contract_data_from_pdf(file_path, company_name=company["search_field"])
+        elif data["file_version"] == "Старая версия(рус)":
+            result = parse_old_ru_contract_data_from_pdf(file_path, company_name=company["search_field"])
+        elif data["file_version"] == "Старая версия(каз)":
+            pass
+
         if not result:
             await message.answer(f"❌ Контракт не найден в пко для: {mfo_name}")
             continue
 
+        
         credit_total = re.sub(r'\s*KZT$', '', result["Общая сумма кредита"])
-        credit_total_no_cents = re.sub(r'\.\d+$', '', credit_total)
+        credit_total_no_cents = remove_cents(credit_total)
         credit_total_int = int(credit_total_no_cents.replace(" ", ""))
         credit_total_words = num2words(credit_total_int, lang='ru')
         result["Общая сумма кредита"] = f"{credit_total_no_cents} ({credit_total_words})"
 
         credit_str = re.sub(r'\s*KZT$', '', result["Непогашенная сумма по кредиту"])
         overdue_str = re.sub(r'\s*KZT$', '', result["Сумма просроченных взносов"])
-        credit_val = float(credit_str.replace(" ", ""))
-        overdue_val = float(overdue_str.replace(" ", ""))
+        credit_val = float(credit_str.replace(" ", "").replace(",", "."))
+        overdue_val = float(overdue_str.replace(" ", "").replace(",", "."))
+
         chosen_str = credit_str if credit_val >= overdue_val else overdue_str
-        chosen_str_no_cents = re.sub(r'\.\d+$', '', chosen_str)
+        chosen_str_no_cents = remove_cents(chosen_str)
         chosen_int = int(chosen_str_no_cents.replace(" ", ""))
         chosen_words = num2words(chosen_int, lang='ru')
 
         result["Непогашенная сумма по кредиту"] = f"{chosen_str_no_cents} ({chosen_words})"
-        result["Сумма просроченных взносов"] = re.sub(r'\.\d+$', '', overdue_str)
+        result["Сумма просроченных взносов"] = remove_cents(overdue_str)
 
         date_diff = calculate_date_diff(result["Дата начала"], result["Дата окончания"])
 
