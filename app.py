@@ -3,12 +3,13 @@ import asyncio
 import json
 import os
 import calendar
+import keyboards as kb
 from datetime import datetime
 from num2words import num2words
 from config import BOT_TOKEN
 from aiogram import Bot, Dispatcher, F
 from aiogram.filters import CommandStart, Command
-from aiogram.types import Message, FSInputFile
+from aiogram.types import Message, FSInputFile, ReplyKeyboardRemove
 from aiogram.fsm.state import StatesGroup, State
 from aiogram.fsm.context import FSMContext
 from docling_qa import ask_ai_from_pdf
@@ -39,6 +40,7 @@ class BatchProcess(StatesGroup):
     mfo_list = State()
     reason = State()
     attached_documents = State()
+    file_version = State()
     
 
 def clean(name: str) -> str:
@@ -161,8 +163,21 @@ async def handle_pdf_with_text(message: Message, state: FSMContext):
     await bot.download_file(file.file_path, destination=file_path)
 
     await state.update_data(user_text=message.caption.strip(), file_path=file_path)
+    await state.set_state(BatchProcess.file_version)
+    await message.answer("📋 Выберите версию файла:", reply_markup=kb.select_file_version)
+
+
+
+@dp.message(BatchProcess.file_version)
+async def handle_choose_file_version(message: Message, state: FSMContext):
+    if message.text not in ["Новая версия(рус)", "Старая версия(рус)", "Старая версия(каз)"]:
+        await message.answer("Нет такого варианта", reply_markup=ReplyKeyboardRemove())
+        return
+    
+    await state.update_data(file_version=message.text)
+
     await state.set_state(BatchProcess.mfo_list)
-    await message.answer("📋 Введите список торговых названий, каждое с новой строки:")
+    await message.answer("📋 Введите список торговых названий, каждое с новой строки:", reply_markup=ReplyKeyboardRemove())
 
 @dp.message(BatchProcess.mfo_list)
 async def handle_mfo_list(message: Message, state: FSMContext):
@@ -214,7 +229,9 @@ async def handle_attached_documents(message: Message, state: FSMContext):
         if not company:
             await message.answer(f"⚠️ Не найдено в Базе данных: {mfo_name}")
             continue
+        
 
+        # тут нужно сдлеать выбор парсера в зависимости от выбранного типпа
         result = parse_contract_data_from_pdf(file_path, company_name=company["search_field"])
         if not result:
             await message.answer(f"❌ Контракт не найден в пко для: {mfo_name}")

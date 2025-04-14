@@ -598,5 +598,15 @@
         "email": "info@hava.kz"
       },
       "search_field": "Hava Finance"
+    },
+    {
+      "trade_name": "салем",
+      "details": {
+        "to": "TOO «MФO «Caлeм Кpeдит»",
+        "address": "Pecпубликa Кaзaxcтaн, г. Aлмaты, Aлмaлинcкий paйoн, пpocпeкт Ceйфуллинa, дoм №502, 8 этaж2",
+        "bin": "200540006761",
+        "email": "info@salem.kz"
+      },
+      "search_field": "Caлeм"
     }
   ]
