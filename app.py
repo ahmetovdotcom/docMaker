@@ -17,6 +17,8 @@ from docling_qa2 import ask_ai_from_pdf2
 from docx_replacer import fill_doc
 from parse_pko_new_version import parse_contract_data_from_pdf, parse_active_total
 from parse_pko_old_ru_version import parse_old_ru_contract_data_from_pdf, parse_old_ru_total_contracts
+from parse_pko_old_kz_version import parse_pko_old_kz_version, parse_old_kz_total_contracts
+from parse_pro_green_ru_version import parse_old_green_ru_total_contracts, parse_pko_green_ru_version
 from datetime import datetime
 import unicodedata
 
@@ -177,7 +179,7 @@ async def handle_pdf_with_text(message: Message, state: FSMContext):
 
 @dp.message(BatchProcess.file_version)
 async def handle_choose_file_version(message: Message, state: FSMContext):
-    if message.text not in ["Новая версия(рус)", "Старая версия(рус)", "Старая версия(каз)"]:
+    if message.text not in ["Новая версия(рус)", "Старая версия(рус)", "Зеленая версия(каз)", "Зеленая версия(рус)"]:
         await message.answer("Нет такого варианта", reply_markup=ReplyKeyboardRemove())
         return
     
@@ -200,7 +202,10 @@ async def handle_mfo_list(message: Message, state: FSMContext):
         await message.answer(f"""В настоящее время мое финансовое положение очень затруднительное в связи с нехваткой денежных средств. Также имею высокую долговую нагрузку ввиду наличия {parse_active_total(data["file_path"])} действующих договоров в микрофинансовых организациях, а также банках второго уровня, это видно по Персональному Кредитному Отчету. Являюсь получателем АСП.""")
     elif data["file_version"] == "Старая версия(рус)":
         await message.answer(f"""В настоящее время мое финансовое положение очень затруднительное в связи с нехваткой денежных средств. Также имею высокую долговую нагрузку ввиду наличия {parse_old_ru_total_contracts(data["file_path"])} действующих договоров в микрофинансовых организациях, а также банках второго уровня, это видно по Персональному Кредитному Отчету. Являюсь получателем АСП.""")
-
+    elif data["file_version"] == "Зеленая версия(каз)":
+        await message.answer(f"""В настоящее время мое финансовое положение очень затруднительное в связи с нехваткой денежных средств. Также имею высокую долговую нагрузку ввиду наличия {parse_old_kz_total_contracts(data["file_path"])} действующих договоров в микрофинансовых организациях, а также банках второго уровня, это видно по Персональному Кредитному Отчету. Являюсь получателем АСП.""")
+    elif data["file_version"] == "Зеленая версия(рус)":
+        await message.answer(f"""В настоящее время мое финансовое положение очень затруднительное в связи с нехваткой денежных средств. Также имею высокую долговую нагрузку ввиду наличия {parse_old_green_ru_total_contracts(data["file_path"])} действующих договоров в микрофинансовых организациях, а также банках второго уровня, это видно по Персональному Кредитному Отчету. Являюсь получателем АСП.""")
 
 @dp.message(BatchProcess.reason)
 async def handle_reason(message: Message, state: FSMContext):
@@ -247,8 +252,11 @@ async def handle_attached_documents(message: Message, state: FSMContext):
             result = parse_contract_data_from_pdf(file_path, company_name=company["search_field"])
         elif data["file_version"] == "Старая версия(рус)":
             result = parse_old_ru_contract_data_from_pdf(file_path, company_name=company["search_field"])
-        elif data["file_version"] == "Старая версия(каз)":
-            pass
+        elif data["file_version"] == "Зеленая версия(каз)":
+            result = parse_pko_old_kz_version(file_path, company_name=company["search_field"])
+        elif data["file_version"] == "Зеленая версия(рус)":
+            result = parse_pko_green_ru_version(file_path, company_name=company["search_field"])
+                
 
         if not result:
             await message.answer(f"❌ Контракт не найден в пко для: {mfo_name}")
