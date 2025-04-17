@@ -306,7 +306,7 @@ async def handle_attached_documents(message: Message, state: FSMContext):
             "term": get_term_by_amount(result["Непогашенная сумма по кредиту"])
         }
 
-        doc_name = result.get("ИИН", "") + "_" + mfo_name + ".docx"
+        doc_name = str(result.get("ИИН", "")) + "_" + mfo_name + ".docx"
         doc_path = f"temp/{doc_name}"
         filename = mfo_name + " " + "заявление на реестр" + " " + user_data["shortName"] + ".docx"
 
