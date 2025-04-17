@@ -55,7 +55,7 @@ def parse_old_ru_contract_data_from_pdf(filepath: str, company_name: str):
     global_text_clean = normalize_text(all_text)
 
     # Глобальные поля
-    iin = extract_global_field(r"Индивидуальныйидентификационныйномер\(ИИН\).*?(\d{12})", global_text_clean)
+    iin = extract_global_field(r"\(ИИН\).*?(\d{12})", global_text_clean)
 
 
     # Договора
