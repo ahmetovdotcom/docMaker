@@ -6,7 +6,7 @@ import calendar
 import keyboards as kb 
 from datetime import datetime
 from num2words import num2words
-from config import BOT_TOKEN
+from config import BOT_TOKEN, ALLOWED_USERS
 from aiogram import Bot, Dispatcher, F
 from aiogram.filters import CommandStart, Command
 from aiogram.types import Message, FSInputFile, ReplyKeyboardRemove
@@ -44,6 +44,15 @@ class BatchProcess(StatesGroup):
     reason = State()
     attached_documents = State()
     file_version = State()
+
+
+def is_authorized(func):
+    async def wrapper(message: Message, *args, **kwargs):
+        if message.from_user.id in ALLOWED_USERS:
+            return await func(message, *args, **kwargs)
+        else:
+            await message.answer("⛔ У вас нет доступа к этому боту.")
+    return wrapper
 
 
 
@@ -156,7 +165,8 @@ def calculate_date_diff(start_date_str, end_date_str):
 #     await message.answer("📄 Пожалуйста, сначала отправьте PDF-файл с описанием. (Жирный клиент)")
 
 @dp.message(F.document)
-async def handle_pdf_with_text(message: Message, state: FSMContext):
+@is_authorized
+async def handle_pdf_with_text(message: Message, state: FSMContext, **kwargs):
     document = message.document
 
     if document.mime_type != "application/pdf":
