@@ -337,12 +337,12 @@ async def handle_attached_documents(message: Message, state: FSMContext):
             result_file = FSInputFile(doc_path, filename=filename)
             await bot.send_document("-4753379582", original_file, caption=user_text)
             await message.answer_document(result_file, caption=f"✅ Документ для: {mfo_name}")
-            # Удаление временного файла
-            try:
-                os.remove(doc_path)
-                os.remove(file_path)
-            except Exception as e:
-                print(f"Не удалось удалить файл {doc_path}: {e}")
+            # # Удаление временного файла
+            # try:
+            #     os.remove(doc_path)
+            #     os.remove(file_path)
+            # except Exception as e:
+            #     print(f"Не удалось удалить файл {doc_path}: {e}")
         await message.answer("✅ Готово!")
         
 
