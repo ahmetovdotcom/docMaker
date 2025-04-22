@@ -545,7 +545,7 @@
         "to": "TOO «MФO «Lending and Financy technologies»",
         "address": "гopoд Кocтaнaй, улицa Aмaнгeльды, дoм 46",
         "bin": "150840012933",
-        "email": "info@dengiclick.kz"
+        "email": "helpdesk@dengigroup.kz"
       },
       "search_field": "Lending and Finance technologies"
     },
@@ -648,6 +648,26 @@
         "email": "support@7payda.kz"
       },
       "search_field": "Aiken Tech"
+    },
+    {
+      "trade_name": "р2п",
+      "details": {
+        "to": "ТОО «Специальная финансовая компания «р2п инвест КЗ»",
+        "address": "Республика Казахстан,г.Алматы Микрорайон Жетысу - 2, дом 85 н/п 140",
+        "bin": "180940000512",
+        "email": "info@sfk.r2pinvest.kz"
+      },
+      "search_field": "р2п инвест КЗ"
+    },
+    {
+      "trade_name": "деньги говорят",
+      "details": {
+        "to": "TOO «Mикpoфинaнcoвaя opгaнизaция «Дeньги гoвopят»",
+        "address": "г. Aлмaты, Бocтaндыкcкий p-н, микpopaйoн Нуp Aлaтaу, E. Paxмaдиeв, 25A",
+        "bin": "190540004760",
+        "email": "help@tengeda.kz"
+      },
+      "search_field": "Деньги говорят"
     }
 ]  
       
