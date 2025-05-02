@@ -668,6 +668,16 @@
         "email": "help@tengeda.kz"
       },
       "search_field": "Деньги говорят"
+    },
+    {
+      "trade_name": "маниплюс",
+      "details": {
+        "to": "TOO «Mикpoфинaнcoвaя opгaнизaция «Moneyplus»",
+        "address": "050005 Г.AЛMATЫ, AУЭЗOBCКИЙ PAЙOН, УЛИЦA TOЛE БИ, ДOM 297",
+        "bin": "230440019359",
+        "email": "collection@moneyplus.kz"
+      },
+      "search_field": "Moneyplus"
     }
 ]  
       
