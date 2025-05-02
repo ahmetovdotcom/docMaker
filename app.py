@@ -262,11 +262,13 @@ async def handle_attached_documents(message: Message, state: FSMContext):
         user_data = json.loads(response)
 
         for mfo_name in mfo_names:
+
             company = find_company_by_trade_name(mfo_name)
             if not company:
                 await message.answer(f"⚠️ Не найдено в Базе данных: {mfo_name}")
                 continue
             
+
 
             # тут нужно сдлеать выбор парсера в зависимости от выбранного типпа
             if data["file_version"] == "Новая версия(рус)":
