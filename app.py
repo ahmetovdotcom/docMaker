@@ -165,7 +165,7 @@ def calculate_date_diff(start_date_str, end_date_str):
 #     await message.answer("📄 Пожалуйста, сначала отправьте PDF-файл с описанием. (Жирный клиент)")
 
 @dp.message(F.document)
-@is_authorized
+# @is_authorized
 async def handle_pdf_with_text(message: Message, state: FSMContext, **kwargs):
     document = message.document
 
