@@ -326,7 +326,8 @@ async def handle_attached_documents(message: Message, state: FSMContext):
                 "reason": reason,
                 "attached_documents": attached_documents,
                 "date_now": get_current_date_str(),
-                "term": get_term_by_amount(result["Непогашенная сумма по кредиту"])
+                "term": get_term_by_amount(result["Непогашенная сумма по кредиту"]),
+                "concluded": "заключил" if user_data["isMale"] == True else "заключила"
             }
 
             doc_name = str(result.get("ИИН", "")) + "_" + mfo_name + ".docx"

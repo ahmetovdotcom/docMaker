@@ -56,7 +56,8 @@ def ask_ai_from_pdf2(pdf_path: str, question: str) -> str:
 Use only the information from the context to answer questions. If you're unsure or the context
 doesn't contain the relevant information, say so.
 
-Твоя задача распределить данные в словаре python. На поля: fullName, shortName, email, phone, address. 
+Твоя задача распределить данные в словаре python. На поля: fullName, shortName, email, phone, address, isMale. 
+В поле isMale укажи булево значение: True, если fullName — мужчина, и False, если женщина.
 Придерживайся строгой стуктуры и не добавляй от себя ничего
 Пример: пиши так чтобы можно было распарcить в json в python не добваляй ```json ```
 {{
@@ -65,6 +66,7 @@ doesn't contain the relevant information, say so.
     "email": "test@mail.ru",
     "phone": "7 777 7777",
     "address": "Астана, ул.Аксенгир дом 13 кв 1",
+    "isMale": "True"
 }}
 
 Context:
