@@ -6,10 +6,10 @@ import calendar
 import keyboards as kb 
 from datetime import datetime
 from num2words import num2words
-from config import BOT_TOKEN, ALLOWED_USERS
+from config import BOT_TOKEN, ALLOWED_USERS, ADMIN_ID
 from aiogram import Bot, Dispatcher, F
 from aiogram.filters import CommandStart, Command
-from aiogram.types import Message, FSInputFile, ReplyKeyboardRemove
+from aiogram.types import Message, FSInputFile, ReplyKeyboardRemove, ReplyKeyboardRemove, InlineKeyboardButton, InlineKeyboardMarkup, CallbackQuery
 from aiogram.fsm.state import StatesGroup, State
 from aiogram.fsm.context import FSMContext
 from docling_qa import ask_ai_from_pdf
@@ -21,6 +21,10 @@ from parse_pko_old_kz_version import parse_pko_old_kz_version, parse_old_kz_tota
 from parse_pro_green_ru_version import parse_old_green_ru_total_contracts, parse_pko_green_ru_version
 from datetime import datetime
 import unicodedata
+from utils import add_user, is_user_allowed, get_user_list, remove_user
+from datetime import datetime, timedelta
+
+
 
 
 
@@ -48,11 +52,115 @@ class BatchProcess(StatesGroup):
 
 def is_authorized(func):
     async def wrapper(message: Message, *args, **kwargs):
-        if message.from_user.id in ALLOWED_USERS:
+        if is_user_allowed(message.from_user.id):
             return await func(message, *args, **kwargs)
         else:
-            await message.answer("⛔ У вас нет доступа к этому боту.")
+            await message.answer("🚫 У вас нет доступа. Хотите запросить его?",
+                             reply_markup=InlineKeyboardMarkup(inline_keyboard=[
+                                 [InlineKeyboardButton(text="📩 Запросить доступ", callback_data="request_access")]
+                             ]))
     return wrapper
+
+@dp.message(Command("users"))
+async def list_users(message: Message):
+    if message.from_user.id != ADMIN_ID:
+        return
+
+    users = get_user_list()
+    if not users:
+        await message.answer("📭 Список пользователей пуст.")
+        return
+
+    text = "📋 <b>Список пользователей:</b>\n\n"
+    for uid, info in users.items():
+        name = f"{info.get('first_name', '')} {info.get('last_name', '')}".strip()
+        username = f"@{info.get('username')}" if info.get('username') else "—"
+        text += f"• <b>{name}</b> {username} — <code>{uid}</code>\n/remove_{uid}\n\n"
+
+    await message.answer(text, parse_mode="HTML")
+
+
+@dp.message(F.text.startswith("/remove_"))
+async def remove_user_command(message: Message):
+    if message.from_user.id != ADMIN_ID:
+        return
+    user_id = int(message.text.split("_")[1])
+    remove_user(user_id)
+    await message.answer(f"❌ Пользователь {user_id} удалён.")
+    try:
+        await bot.send_message(user_id, "⚠️ Ваш доступ к боту был удалён администратором.")
+    except:
+        pass  # если пользователь заблокировал бота
+
+
+
+
+@dp.callback_query(F.data == "request_access")
+async def request_access(callback: CallbackQuery):
+    await callback.message.edit_text("✅ Запрос отправлен администратору. Пожалуйста, ожидайте одобрения.")
+    user = callback.from_user
+    await callback.answer("⏳ Запрос отправлен админу.")
+
+    keyboard = InlineKeyboardMarkup(inline_keyboard=[
+        [InlineKeyboardButton(text="✅ 7 дней", callback_data=f"grant:{user.id}:7")],
+        [InlineKeyboardButton(text="✅ 14 дней", callback_data=f"grant:{user.id}:14")],
+        [InlineKeyboardButton(text="✅ 30 дней", callback_data=f"grant:{user.id}:30")],
+        [InlineKeyboardButton(text="✅ Навсегда", callback_data=f"grant:{user.id}:0")],
+        [InlineKeyboardButton(text="❌ Отклонить", callback_data=f"deny:{user.id}")]
+    ])
+
+    await bot.send_message(ADMIN_ID,
+        f"📥 Запрос от @{user.username or '-'}\nID: {user.id}\nИмя: {user.first_name}",
+        reply_markup=keyboard)
+    
+    
+@dp.callback_query(F.data.startswith("grant:"))
+async def grant_access(callback: CallbackQuery):
+    _, user_id, days = callback.data.split(":")
+    user_id = int(user_id)
+    days = int(days)
+
+    user = await bot.get_chat(user_id)
+
+    # Вычисляем дату окончания
+    if days == 0:
+        until = "бессрочно"
+    else:
+        end_date = datetime.now() + timedelta(days=days)
+        until = end_date.strftime("%d.%m.%Y")
+
+    # Добавляем пользователя с датой окончания
+    add_user(user_id, user.first_name, user.last_name or "", user.username or "", days)
+
+    await callback.answer("✅ Доступ выдан.")
+
+    # Сообщение для пользователя
+    try:
+        await bot.send_message(
+            user_id,
+            f"✅ Вам выдан доступ до {until}." if days else "✅ Вам выдан постоянный доступ."
+        )
+    except:
+        pass
+
+    # Обновляем сообщение админа (удаляем кнопки + пишем кому выдано)
+    full_name = f"{user.first_name} {user.last_name}".strip()
+    username = f"@{user.username}" if user.username else ""
+    await callback.message.edit_text(
+        f"✅ Доступ выдан пользователю {full_name} {username} (ID: <code>{user_id}</code>) до <b>{until}</b>.",
+        parse_mode="HTML"
+    )
+
+@dp.callback_query(F.data.startswith("deny:"))
+async def deny_access(callback: CallbackQuery):
+    _, user_id = callback.data.split(":")
+    await callback.answer("❌ Запрос отклонён.")
+    try:
+        await bot.send_message(user_id, "🚫 Ваш запрос на доступ был отклонён.")
+    except:
+        pass
+
+
 
 
 
@@ -165,7 +273,7 @@ def calculate_date_diff(start_date_str, end_date_str):
 #     await message.answer("📄 Пожалуйста, сначала отправьте PDF-файл с описанием. (Жирный клиент)")
 
 @dp.message(F.document)
-# @is_authorized
+@is_authorized
 async def handle_pdf_with_text(message: Message, state: FSMContext, **kwargs):
     document = message.document
 
