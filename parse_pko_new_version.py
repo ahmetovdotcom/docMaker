@@ -13,6 +13,7 @@ def safe_numeric_string(value):
     except ValueError:
         return "0"
 
+
 def normalize_text(text: str, lower: bool = True) -> str:
     """Удаляет пробелы, переносы строк и лишние символы для нормализации текста."""
     if lower == True:
@@ -64,9 +65,10 @@ def parse_contract_data_from_pdf(filepath: str, company_name: str):
 
     doc.close()  # Закрываем документ
 
+
     # Разделяем текст на блоки по регулярному выражению
     contract_chunks = re.findall(
-        r"(Общая сумма кредита / валюта:.*?)(?=ЗАЛОГИ)", 
+        r"((?:Общая сумма кредита / валюта|Сумма кредитного лимита):.*?)(?=ЗАЛОГИ)", 
         full_text, 
         flags=re.DOTALL
     )
@@ -83,9 +85,9 @@ def parse_contract_data_from_pdf(filepath: str, company_name: str):
                 ),
                 'Дата начала': extract_field(r'Дата начала[^0-9]*(\d{2}\.\d{2}\.\d{4})', chunk),
                 'Дата окончания': extract_field(r'Дата окончания[^0-9]*(\d{2}\.\d{2}\.\d{4})', chunk),
-                'Общая сумма кредита': safe_numeric_string(extract_field(r"Общая сумма кредита / валюта:\s*([^\n]+)", chunk)),
+                'Общая сумма кредита': safe_numeric_string(extract_field(r"(?:Общая сумма кредита / валюта|Сумма кредитного лимита):\s*([^\n]+)", chunk)),
                 'Сумма просроченных взносов': safe_numeric_string(extract_field(r"Сумма просроченных взносов:\s*([^\n]+)", chunk)),
-                'Непогашенная сумма по кредиту': safe_numeric_string(extract_field(r"Непогашенная сумма по кредиту:\s*([^\n]+)", chunk)),
+                'Непогашенная сумма по кредиту': safe_numeric_string(extract_field(r"(?:Непогашенная сумма по кредиту|Использованная сумма \(подлежащая погашению\)):\s*([^\n]+)", chunk)),
                 'ИИН': iin
             }
 

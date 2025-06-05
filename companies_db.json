@@ -678,6 +678,116 @@
         "email": "collection@moneyplus.kz"
       },
       "search_field": "Moneyplus"
+    }, 
+    {
+      "trade_name": "Народный",
+      "details": {
+        "to": "АО \"Народный Банк Казахстана\"",
+        "address": "г. Алматы, Медеуский р-н, пр. Аль-Фараби, 40",
+        "bin": "940140000385",
+        "email": "info@halykbank.kz"
+      },
+      "search_field": "Народный"
+    }, 
+    {
+      "trade_name": "Хом кредит",
+      "details": {
+        "to": "АО “Home Credit Bank”",
+        "address": "Г.АЛМАТЫ, МЕДЕУСКИЙ РАЙОН, Проспект Нұрсұлтан Назарбаев, дом 248",
+        "bin": "930540000147",
+        "email": "info@homecredit.kz"
+      },
+      "search_field": "Home"
+    }, 
+    {
+      "trade_name": "береке",
+      "details": {
+        "to": "Акционерное общество \"Bereke Bank\" (дочерний банк Lesha Bank LLC (Public))",
+        "address": "Г.АЛМАТЫ, БОСТАНДЫКСКИЙ РАЙОН, Проспект Аль-Фараби, дом 13/1",
+        "bin": "930740000137",
+        "email": "post@berekebank.kz"
+      },
+      "search_field": "Bereke"
+    }, 
+    {
+      "trade_name": "каспи",
+      "details": {
+        "to": "АО \"KASPI BANK\"",
+        "address": "ГОРОД АЛМАТЫ, БОСТАНДЫКСКИЙ РАЙОН, УЛ. НАУРЫЗБАЙ БАТЫРА, Д. 154А",
+        "bin": "971240001315",
+        "email": "office@kaspi.kz"
+      },
+      "search_field": "Kaspi"
+    }, 
+    {
+      "trade_name": "Жусан",
+      "details": {
+        "to": "АО «First Heartland Jusan Bank»",
+        "address": "A26F8T9, г. Алматы, Медеуский р-н, пр. Нурсултана Назарбаева, 242",
+        "bin": "920140000084",
+        "email": "info@jusan.kz"
+      },
+      "search_field": "Jusan"
+    }, 
+    {
+      "trade_name": "Джусан",
+      "details": {
+        "to": "АО «First Heartland Jusan Bank»",
+        "address": "A26F8T9, г. Алматы, Медеуский р-н, пр. Нурсултана Назарбаева, 242",
+        "bin": "920140000084",
+        "email": "info@jusan.kz"
+      },
+      "search_field": "Jusan"
+    }, 
+    {
+      "trade_name": "Евразийский",
+      "details": {
+        "to": "АО \"Евразийский банк\"",
+        "address": "город Алматы, Медеуский район, -, улица Кунаева, 56",
+        "bin": "950240000112",
+        "email": "info@eubank.kz"
+      },
+      "search_field": "Евразийский"
+    }, 
+    {
+      "trade_name": "Форте",
+      "details": {
+        "to": "АО «ForteBank»",
+        "address": "010017, Республика Казахстан, г. Астана, район Есиль, ул. Достык, 8/1",
+        "bin": "990740000683",
+        "email": "info@fortebank.com"
+      },
+      "search_field": "ForteBank"
+    }, 
+    {
+      "trade_name": "РБК",
+      "details": {
+        "to": "АО \"Bank RBK\"",
+        "address": "050013, Республика Казахстан, г. Алматы, Бостандыкский район, площадь Республики, д. 15",
+        "bin": "920440001102",
+        "email": "info@bankrbk.kz"
+      },
+      "search_field": "RBK"
+    }, 
+    {
+      "trade_name": "БЦК",
+      "details": {
+        "to": "АО \"Банк Центркредит\"",
+        "address": "Казахстан, город Алматы, Медеуский район, Проспект АЛЬ-ФАРАБИ, дом 38",
+        "bin": "80640000093",
+        "email": "info@bcc.kz"
+      },
+      "search_field": "Центркредит"
+    }, 
+    {
+      "trade_name": "Отбасы",
+      "details": {
+        "to": "АО \"Жилищный строительный сберегательный банк \"Отбасы банк\"",
+        "address": "Казахстан, г. Алматы, пр. Абылай хана, 91",
+        "bin": "030740001404",
+        "email": "mail@hcsbk.kz"
+      },
+      "search_field": "Отбасы"
     }
 ]  
       
