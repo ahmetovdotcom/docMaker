@@ -820,24 +820,24 @@
       "search_field": "РОПВД"
     }, 
     {
-      "trade_name": "ELITE",
+      "trade_name": "элит",
       "details": {
         "to": "ТОО \"КОЛЛЕКТОРСКОЕ АГЕНТСТВО \"ELITE KZ\"\"",
         "address": "050008, ГОРОД АЛМАТЫ, АЛМАЛИНСКИЙ РАЙОН, УЛ. КОЖАМКУЛОВА, Д. 273",
         "bin": "201140015461",
         "email": "info@elite-01.kz"
       },
-      "search_field": "элит"
+      "search_field": "ELITE"
     }, 
     {
-      "trade_name": "Asyl Group",
+      "trade_name": "асыл групп",
       "details": {
         "to": "ТОО \"Коллекторское агентство \"Asyl Group\"",
         "address": "Г.АЛМАТЫ, ТУРКСИБСКИЙ РАЙОН, Микрорайон Кайрат, дом 282",
         "bin": "180440003053",
         "email": "info@asylgroup.kz"
       },
-      "search_field": "асыл групп"
+      "search_field": "Asyl"
     }, 
     {
       "trade_name": "ЦПК",
@@ -850,44 +850,44 @@
       "search_field": "ЦПК"
     }, 
     {
-      "trade_name": "Rioni",
+      "trade_name": "риони",
       "details": {
         "to": "ТОО Коллекторское агентство \"Rioni Capital\"",
         "address": "город Алматы, Ауэзовский район, микрорайон Сайран, дом 14, офис 313",
         "bin": "190840019363",
         "email": "rioni_capital@bk.ru"
       },
-      "search_field": "риони"
+      "search_field": "Rioni"
     }, 
     {
-      "trade_name": "ДЕБТУС",
+      "trade_name": "дебтус",
       "details": {
         "to": "ТОО \"Коллекторское агентство \"ДЕБТУС\"",
         "address": "город Алматы, Алмалинский район, -, улица Жамбыла, 114/85",
         "bin": "230340011324",
         "email": "info@debtus.kz"
       },
-      "search_field": "дебтус"
+      "search_field": "ДЕБТУС"
     }, 
     {
-      "trade_name": "АКТИВ",
+      "trade_name": "актив",
       "details": {
         "to": "ТОО \"КОЛЛЕКТОРСКОЕ АГЕНТСТВО \"АКТИВ КОЛЛЕКШН\"\"",
         "address": "ГОРОД АЛМАТЫ, АЛМАЛИНСКИЙ РАЙОН, УЛ. ТОРЕКУЛОВА, Д. 68, 8 ЭТАЖ, КАБИНЕТ 808",
         "bin": "180640010876",
         "email": "info@activecollection.kz"
       },
-      "search_field": "актив"
+      "search_field": "АКТИВ"
     }, 
     {
-      "trade_name": "F COLLECT",
+      "trade_name": "ф коллект",
       "details": {
         "to": "ТОО \"КОЛЛЕКТОРСКОЕ АГЕНТСТВО «F COLLECT»\"",
         "address": "ГОРОД АЛМАТЫ, АЛМАЛИНСКИЙ РАЙОН, ПР. СЕЙФУЛЛИНА, Д. 404/67",
         "bin": "240140027211",
         "email": "info@fcollect.kz"
       },
-      "search_field": "ф коллект"
+      "search_field": "F COLLECT"
     }, 
     {
       "trade_name": "ТАЙМ ИНВЕСТ",
@@ -900,44 +900,44 @@
       "search_field": "тайм инвест"
     }, 
     {
-      "trade_name": "Департамент взыскания долгов",
+      "trade_name": "дпвд",
       "details": {
         "to": "ТОО \"Коллекторское агентство \"Департамент взыскания долгов\"",
         "address": "Проспект Абая, дом 150",
         "bin": "080740000306",
         "email": "info@cadvd.kz"
       },
-      "search_field": "дпвд"
+      "search_field": "Департамент взыскания долгов"
     }, 
     {
-      "trade_name": "ОнлайнКазФинанс",
+      "trade_name": "солва",
       "details": {
         "to": "АО \"Микрофинансовая организация ОнлайнКазФинанс\"",
         "address": "город Алматы, Алмалинский район, -, Проспект Сейфуллина, 502",
         "bin": "160840000397",
         "email": "support@solva.kz"
       },
-      "search_field": "солва"
+      "search_field": "ОнлайнКазФинанс"
     }, 
     {
-      "trade_name": "FB КРЕДИТ",
+      "trade_name": "фб кредит",
       "details": {
         "to": "ТОО \"МИКРОФИНАНСОВАЯ ОРГАНИЗАЦИЯ \"FB КРЕДИТ\"",
         "address": "город Алматы, Алмалинский район,Жамбыла, дом 114/85",
         "bin": "170840035361",
         "email": "info@akshamat.kz"
       },
-      "search_field": "фб кредит"
+      "search_field": "FB КРЕДИТ"
     }, 
     {
-      "trade_name": "MICROCASH",
+      "trade_name": "микрокэш",
       "details": {
         "to": "ТОО \"МИКРОФИНАНСОВАЯ ОРГАНИЗАЦИЯ \"MICROCASH\"\"",
         "address": "ГОРОД АЛМАТЫ, МЕДЕУСКИЙ РАЙОН, УЛ. КУНАЕВА, Д. 181Б",
         "bin": "241040000675",
         "email": "info@microcash.kz"
       },
-      "search_field": "микрокэш"
+      "search_field": "MICROCASH"
     }
 ]  
       
